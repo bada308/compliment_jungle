@@ -11,9 +11,7 @@ function handleToggle() {
   }
 }
 
-function handleCountUp(element) {
-  habitId = element.getAttribute("key");
-
+function handleCountUp(habitId) {
   $.ajax({
     type: "POST",
     url: `/habits/count/${habitId}`,

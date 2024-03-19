@@ -98,9 +98,8 @@
             >
           </div>
           <div
-            key="{{ x._id }}"
             class="border-4 rounded-full w-12 h-12 border-mainGreen flex justify-center items-center"
-            onclick="handleCountUp(this)"
+            onclick="handleCountUp({{ x._id }})"
           >
             <span class="font-bold text-mainGreen">{{ x.count }}</span>
           </div>
