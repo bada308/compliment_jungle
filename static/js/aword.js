@@ -27,6 +27,7 @@ function handleClickCompliment(element) {
 
 function showEmojiSelector(habit_id, icon_num) {
   let emojiSelector = document.createElement("div");
+  emojiSelector.key = habit_id;
   emojiSelector.id = "emojiSelector";
   emojiSelector.className =
     "absolute top-7 right-0 grid grid-cols-5 gap-6 bg-mainYellow p-2 rounded-lg";
@@ -61,3 +62,20 @@ function showEmojiSelector(habit_id, icon_num) {
     .querySelector(`#complimentToggle${habit_id}`)
     .appendChild(emojiSelector);
 }
+
+const handleEmojiClick = (iconNum) => {
+  const habitId = document.querySelector("#emojiSelector").key;
+
+  $.ajax({
+    type: "POST",
+    url: `/compliments`,
+    data: { habit_id: habitId, icon_num: iconNum },
+    success: function (response) {
+      if (response["result"] != "success") {
+        alert("칭찬하기 실패!");
+        return;
+      }
+      location.reload();
+    },
+  });
+};
