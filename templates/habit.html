@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="static/js/tailwind.config.js"></script>
+    <script src="static/js/habit.js"></script>
+  </head>
+  <body>
+    <div
+      class="w-[26rem] m-auto px-10 shadow-lg flex flex-col h-screen overflow-y-scroll pb-8"
+    >
+      <!-- Header -->
+      <header
+        id="header"
+        class="flex justify-between border-b-2 border-gray-20 p-1 mb-4 sticky top-0 bg-white"
+      >
+        <img src="static/jungle_logo.png" alt="크래프톤 정글" width="112" />
+        <div class="flex gap-4 items-center">
+          <a href="/habit" class="h-fit"
+            ><img src="static/user_icon.svg" alt="나의 습관 버튼" width="28"
+          /></a>
+          <a href="/aword" class="h-fit"
+            ><img src="static/aword_icon.svg" alt="명에의 전당 버튼" width="28"
+          /></a>
+        </div>
+      </header>
+      <!-- 습관 추가 토글 -->
+      <div
+        id="habitAddToggle"
+        class="ml-auto w-fit cursor-pointer mb-4"
+        onclick="handleToggle()"
+      >
+        <span id="habitAddToggleText" class="underline text-sm text-gray-30"
+          >추가하기</span
+        >
+      </div>
+      <!-- 습관 추가 영역 -->
+      <div id="habitCreate" class="space-y-3 pb-8 mb-8">
+        <div id="habitInput1">
+          <label for="habitName" class="text-sm text-gray-30">습관</label>
+          <input
+            id="habitName"
+            type="text"
+            class="w-full border-2 border-gray-20 rounded-lg p-3 bg-gray-10 text-black outline-none"
+            placeholder="습관 이름 입력"
+          />
+        </div>
+        <div id="habitInput2" class="grid grid-cols-2 gap-2">
+          <div>
+            <label for="habitGoal" class="text-sm text-gray-30"
+              >목표 횟수</label
+            >
+            <input
+              id="habitGoal"
+              type="text"
+              class="w-full border-2 border-gray-20 rounded-lg p-3 bg-gray-10 text-black outline-none"
+              placeholder="목표 횟수 입력"
+            />
+          </div>
+          <div>
+            <label for="habitTag" class="text-sm text-gray-30"
+              >태그(선택)</label
+            >
+            <input
+              id="habitTag"
+              type="text"
+              class="w-full border-2 border-gray-20 rounded-lg p-3 bg-gray-10 text-black outline-none"
+              placeholder="태그 입력"
+            />
+          </div>
+        </div>
+        <div id="habitButton" class="space-x-2 w-fit ml-auto">
+          <button
+            class="bg-black text-white px-7 py-3 font-semibold rounded-xl"
+          >
+            취소
+          </button>
+          <button
+            class="bg-primary text-white px-7 py-3 font-semibold rounded-xl"
+          >
+            생성
+          </button>
+        </div>
+      </div>
+      <div class="space-y-4">
+        <!-- Habit 리스트 컨테이너-->
+        {% for x in habits %}
+        <div
+          class="rounded-lg w-full flex justify-between p-6 items-center bg-softGreen border-2 border-mainGreen"
+        >
+          <div class="flex flex-col gap-3">
+            <span class="text-xl font-bold text-black">{{ x.name }}</span>
+            <span class="text-sm text-gray-500"
+              >목표 {{ x.goal }} ・ {{x.tag}}</span
+            >
+          </div>
+          <div
+            class="border-4 rounded-full w-12 h-12 border-mainGreen flex justify-center items-center"
+          >
+            <span class="font-bold text-mainGreen">{{ x.count }}</span>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
