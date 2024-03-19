@@ -10,3 +10,17 @@ function handleToggle() {
     $("#habitAddToggleText").text("접어두기");
   }
 }
+
+function handleCountUp(element) {
+  habitId = element.getAttribute("key");
+
+  $.ajax({
+    type: "POST",
+    url: `/habits/count/${habitId}`,
+    success: function (response) {
+      if (response.result === "success") {
+        location.reload();
+      }
+    },
+  });
+}
