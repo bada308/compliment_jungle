@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="static/js/tailwind.config.js"></script>
+    <script src="static/js/signup.js"></script>
+  </head>
+  <body>
+    <div
+      class="w-[26rem] m-auto px-10 shadow-lg flex flex-col justify-center h-screen"
+    >
+      <img src="static/jungle_logo.png" alt="크래프톤 정글 로고" width="100" />
+      <h1 class="font-bold text-3xl">
+        칭찬해 <span class="text-mainGreen">정글</span>러
+      </h1>
+      <form class="space-y-4 mt-24">
+        <div>
+          <label class="text-sm text-gray-30">프로필 사진</label>
+          <div class="flex gap-2">
+            {% for i in 0, 1, 2, 3, 4 %}
+            <div
+              id="profile{{i}}"
+              class="profileItem border-[3px] border-white"
+              onclick="handleProfileSelect({{i}})"
+            >
+              <img src="static/profile/{{i}}.png" width="80" />
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        <div>
+          <label for="nickname" class="text-sm text-gray-30">Nickname</label>
+          <input
+            id="nickname"
+            type="text"
+            class="w-full border-2 border-gray-20 rounded-lg p-3 bg-gray-10 text-black outline-none"
+            placeholder="닉네임 입력"
+          />
+        </div>
+        <div>
+          <label for="email" class="text-sm text-gray-30">Email</label>
+          <input
+            id="email"
+            type="email"
+            class="w-full border-2 border-gray-20 rounded-lg p-3 bg-gray-10 text-black outline-none"
+            placeholder="이메일 입력"
+          />
+        </div>
+        <div>
+          <label for="password" class="text-sm text-gray-30">Password</label>
+          <input
+            id="password"
+            type="password"
+            class="w-full border-2 border-gray-20 rounded-lg p-3 bg-gray-10 text-black outline-none"
+            placeholder="비밀번호 입력"
+          />
+        </div>
+        <div>
+          <label for="confirmPassword" class="text-sm text-gray-30"
+            >Confirm Password</label
+          >
+          <input
+            id="confirmPassword"
+            type="password"
+            class="w-full border-2 border-gray-20 rounded-lg p-3 bg-gray-10 text-black outline-none"
+            placeholder="비밀번호 재입력"
+          />
+        </div>
+        <button
+          type="button"
+          class="bg-black text-white w-full py-3 font-semibold rounded-xl mt-12"
+          onclick="handleSignup()"
+        >
+          회원가입
+        </button>
+      </form>
+      <span class="text-black mx-auto mt-12">
+        이미 회원이신가요?
+        <a href="/login" class="text-primary font-bold">로그인</a>
+      </span>
+    </div>
+  </body>
+</html>
