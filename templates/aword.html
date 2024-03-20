@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="static/js/tailwind.config.js"></script>
+    <script src="static/js/aword.js"></script>
+    <script src="static/js/logout.js"></script>
+  </head>
+  <body>
+    <div
+      class="w-[26rem] m-auto px-10 pb-8 shadow-lg flex flex-col h-screen overflow-y-scroll"
+    >
+      <!-- Header -->
+      <header
+        id="header"
+        class="flex justify-between border-b-2 border-gray-20 p-1 mb-4 sticky top-0 bg-white z-10"
+      >
+        <img
+          src="static/image/jungle_logo.png"
+          alt="크래프톤 정글"
+          width="112"
+        />
+        <div class="flex gap-4 items-center">
+          <img
+            onclick="handleLogout()"
+            src="static/image/sign_out.svg"
+            alt="로그아웃 버튼"
+            width="26"
+          />
+          <a href="/habit" class="h-fit"
+            ><img
+              src="static/image/user_icon.svg"
+              alt="나의 습관 버튼"
+              width="28"
+          /></a>
+          <a href="/aword" class="h-fit"
+            ><img
+              src="static/image/aword_icon.svg"
+              alt="명에의 전당 버튼"
+              width="28"
+          /></a>
+        </div>
+      </header>
+      <!-- Main -->
+      <div class="space-y-6">
+        {% for x in awords %}
+        <div class="space-y-2">
+          <div
+            id="aword-{{ x.habit_id }}"
+            class="rounded-lg w-full flex flex-col gap-6 p-6 bg-softYellow border-2 border-mainYellow"
+          >
+            <div class="flex gap-2">
+              <img
+                class="rounded-full"
+                src="static/profile/{{ x.image_num }}.png"
+                alt="프로필"
+                width="44"
+              />
+              <div>
+                <span class="text-black font-semibold">{{ x.nickname }}</span>
+                <div class="flex gap-2">
+                  <img src="static/image/crown.svg" /><span
+                    class="text-sm text-gray-40"
+                    >{{x.goal}}번</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div
+              id="complimentToggle{{x.habit_id}}"
+              class="w-full flex justify-between relative"
+            >
+              <span class="text-xl font-bold text-black">{{ x.name }}</span>
+              <button
+                key="{{ x.habit_id }}"
+                id="complimentToggleButton{{x.habit_id}}"
+                class="text-yellow-500 font-bold"
+                onclick="handleClickCompliment(this)"
+              >
+                칭찬하기
+              </button>
+            </div>
+          </div>
+          <div class="flex gap-2 justify-end">
+            <!-- Emoji -->
+            {% for compliment in x.compliments %}
+            <div class="flex gap-1 text-black">
+              <img
+                src="/static/emoji/{{compliment.icon_num}}.svg"
+                alt="칭찬 이모지 {{compliment.icon_num}}"
+                width="18"
+              />
+              <span>{{ compliment.compliment_num }}</span>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
