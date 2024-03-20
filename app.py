@@ -115,6 +115,8 @@ def authorization(token):
     
     except jwt.exceptions.DecodeError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+    except jwt.ExpiredSignatureError:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
 
 # ~ 비즈니스 로직 ~
@@ -127,8 +129,6 @@ def post_habit():
     user_info = authorization(token)
 
     if not user_info:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
-    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     name = request.form['name']
@@ -164,8 +164,6 @@ def get_habits():
 
     if not user_info:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
-    except jwt.ExpiredSignatureError:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     habits = list(db.habits.find({'user_id': str(user_info['_id']), 'accomplishment': False}).sort("create_date", -1))
 
@@ -185,8 +183,6 @@ def delete_habit(_id):
 
     if not user_info:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
-    except jwt.ExpiredSignatureError:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     db.habits.delete_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id)})
 
@@ -201,8 +197,6 @@ def post_habit_count(_id):
     user_info = authorization(token)
 
     if not user_info:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'}
-    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     habit = db.habits.find_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id), })
@@ -230,8 +224,6 @@ def get_awards():
     user_info = authorization(token)
 
     if not user_info:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'}
-    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     awards = db.habits.find({'accomplishment': True})
@@ -264,8 +256,6 @@ def post_compliment():
     user_info = authorization(token)
 
     if not user_info:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'}
-    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     habit_id = request.form['_id']
@@ -308,8 +298,6 @@ def get_compliment(_id):
     user_info = authorization(token)
 
     if not user_info:
-        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'}
-    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     compliment = db.compliments.find_one({'user_id': str(user_info['_id']), 'habit_id': _id})
