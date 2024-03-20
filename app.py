@@ -337,7 +337,7 @@ def update_complimnet(_id):
     
     icon_num = request.form['icon_num']
     
-    db.compliments.update_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id)}, {'$set': {'icon_num': icon_num}})
+    db.compliments.update_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id)}, {'$set': {'icon_num': int(icon_num)}})
 
     compliment = db.compliments.find_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id)})
 
