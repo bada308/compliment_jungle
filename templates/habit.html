@@ -56,7 +56,7 @@
         >
       </div>
       <!-- 습관 추가 영역 -->
-      <div id="habitCreate" class="space-y-3 pb-8 mb-8">
+      <div id="habitCreate" class="space-y-3 pb-8 mb-8 hidden">
         <div id="habitInput1">
           <label for="habitName" class="text-sm text-gray-30">습관</label>
           <input
@@ -105,20 +105,13 @@
           </button>
         </div>
       </div>
-      <div class="space-y-4">
+      <div class="space-y-8">
         <!-- Habit 리스트 컨테이너-->
         {% for x in habits %}
         <section
+          onmouseover="changeCheerupMessage({{ x._id }}, {{ x.count }}, {{ x.goal }})"
           class="rounded-lg w-full flex flex-col p-6 bg-softGreen border-2 border-mainGreen gap-2 relative group"
         >
-          <img
-            id="deleteButton"
-            src="static/image/cross.svg"
-            width="14"
-            class="absolute right-3 top-3 cursor-pointer invisible group-hover:visible"
-            alt="습관 삭제하기"
-            onclick="handleDeleteHabit({{ x._id }})"
-          />
           <div class="flex justify-between items-center">
             <div class="flex flex-col gap-3">
               <span class="text-xl font-bold text-black">{{ x.name }}</span>
@@ -127,14 +120,28 @@
               >
             </div>
             <div
-              class="border-4 rounded-full w-12 h-12 border-mainGreen flex justify-center items-center"
+              class="border-4 rounded-full w-12 h-12 border-mainGreen flex justify-center items-center group active:bg-mainGreen transition-colors duration-200"
               onclick="handleCountUp({{ x._id }})"
             >
-              <span class="font-bold text-mainGreen">{{ x.count }}</span>
+              <span
+                class="font-bold text-mainGreen group-active:text-white transition-colors duration-200 cursor-pointer"
+                >{{ x.count }}</span
+              >
             </div>
           </div>
+          <img
+            id="deleteButton"
+            src="static/image/cross.svg"
+            width="14"
+            class="absolute right-3 top-3 cursor-pointer invisible group-hover:visible"
+            alt="습관 삭제하기"
+            onclick="handleDeleteHabit({{ x._id }})"
+          />
+          <div
+            id="cheerupMessage{{x._id}}"
+            class="absolute group-hover:visible invisible text-sm text-gray-500 -bottom-8 p-2 rounded-lg w-full text-center"
+          ></div>
         </section>
-
         {% endfor %}
       </div>
     </div>

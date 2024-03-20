@@ -1,6 +1,6 @@
-$(document).ready(function () {
-  $("#habitCreate").css("display", "none");
-});
+// $(document).ready(function () {
+//   $("#habitCreate").css("display", "none");
+// });
 
 function handleToggle() {
   $("#habitCreate").toggle();
@@ -87,3 +87,20 @@ function handleDeleteHabit(habitId) {
     },
   });
 }
+
+function changeCheerupMessage(habitId, count, goal) {
+  let message = MESSAGE.default;
+  if (count >= goal / 2) {
+    message = MESSAGE.half;
+  }
+  if (count >= goal * 0.8) {
+    message = MESSAGE.almost(goal - count);
+  }
+  $(`#cheerupMessage${habitId}`).text(message);
+}
+
+const MESSAGE = {
+  default: "잘 하고 있어요! 목표에 한 발짝 더 다가가세요!",
+  half: "목표의 절반을 달성했어요! 조금만 더 힘내세요!",
+  almost: (remaining) => `목표까지 ${remaining}번 남았어요! 화이팅!`,
+};
