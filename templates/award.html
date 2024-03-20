@@ -47,37 +47,41 @@
       </header>
       <!-- Main -->
       <div class="space-y-6">
-        {% for x in awards %}
+        {% for x in data %}
         <div class="space-y-2">
           <div
-            id="award-{{ x.habit_id }}"
+            id="award-{{ x.habit._id }}"
             class="rounded-lg w-full flex flex-col gap-6 p-6 bg-softYellow border-2 border-mainYellow"
           >
             <div class="flex gap-2">
               <img
                 class="rounded-full"
-                src="static/profile/{{ x.image_num }}.png"
+                src="static/profile/{{ x.habit.image_num }}.png"
                 alt="프로필"
                 width="44"
               />
               <div>
-                <span class="text-black font-semibold">{{ x.nickname }}</span>
+                <span class="text-black font-semibold"
+                  >{{ x.habit.nickname }}</span
+                >
                 <div class="flex gap-2">
                   <img src="static/image/crown.svg" /><span
                     class="text-sm text-gray-40"
-                    >{{x.goal}}번</span
+                    >{{x.habit.goal}}번</span
                   >
                 </div>
               </div>
             </div>
             <div
-              id="complimentToggle{{x.habit_id}}"
+              id="complimentToggle{{x.habit._id}}"
               class="w-full flex justify-between relative"
             >
-              <span class="text-xl font-bold text-black">{{ x.name }}</span>
+              <span class="text-xl font-bold text-black"
+                >{{ x.habit.name }}</span
+              >
               <button
-                key="{{ x.habit_id }}"
-                id="complimentToggleButton{{x.habit_id}}"
+                key="{{ x.habit._id }}"
+                id="complimentToggleButton{{x.habit._id}}"
                 class="text-yellow-500 font-bold"
                 onclick="handleClickCompliment(this)"
               >
@@ -99,7 +103,6 @@
             {% endfor %}
           </div>
         </div>
-
         {% endfor %}
       </div>
     </div>

@@ -18,10 +18,10 @@ $(document).ready(function () {
 
 function addHabit(habits) {
   habits.forEach((habit) => {
-    const { _id, name, count, goal, tag } = habit;
+    const { _id: habitId, name, count, goal, tag } = habit;
 
     const habitCard = `<section
-          key=${_id}
+          key=${habitId}
           data-count=${count}
           data-goal=${goal}
           onmouseover="changeCheerupMessage(this)"
@@ -35,7 +35,7 @@ function addHabit(habits) {
               >
             </div>
             <div
-              key=${_id}
+              key=${habitId}
               class="border-4 rounded-full w-12 h-12 border-mainGreen flex justify-center items-center group active:bg-mainGreen transition-colors duration-200"
               onclick="handleCountUp(this)"
             >
@@ -46,7 +46,7 @@ function addHabit(habits) {
             </div>
           </div>
           <img
-            key=${_id}
+            key=${habitId}
             id="deleteButton"
             src="static/image/cross.svg"
             width="14"
@@ -55,7 +55,7 @@ function addHabit(habits) {
             onclick="handleDeleteHabit(this)"
           />
           <div
-            id="cheerupMessage${_id}"
+            id="cheerupMessage${habitId}"
             class="absolute group-hover:visible invisible text-sm text-gray-500 -bottom-8 p-2 rounded-lg w-full text-center"
           ></div>
         </section>`;
