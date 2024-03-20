@@ -324,6 +324,43 @@ def get_compliment(_id):
 
     return jsonify({'result': 'success', 'data': compliment})
 
+# 칭찬 수정 API
+@app.route('/compliments/<_id>', methods=['POST'])
+def update_complimnet(_id):
+    
+    token = request.cookies.get('token')
+    print(token)
+    user_info = authorization(token)
+
+    if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+    
+    icon_num = request.form['icon_num']
+    
+    db.compliments.update_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id)}, {'$set': {'icon_num': int(icon_num)}})
+
+    compliment = db.compliments.find_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id)})
+
+    data = []
+
+    habit = db.habits.find_one({'_id': ObjectId(compliment['habit_id']), 'accomplishment': True})
+
+    if habit is None: 
+        return jsonify({'result': 'success', 'data': []})
+
+    habit['_id'] = str(habit['_id'])
+    compliments = []
+
+    for i in range(0, 5):
+        compliment_num = len(list(db.compliments.find({'habit_id': habit['_id'], 'icon_num': i})))
+        
+        if compliment_num != 0:
+            compliments.append({'icon_num': i, 'compliment_num': compliment_num})
+
+    data.append({'habit': habit, 'compliments': compliments})
+
+    return jsonify({'result': 'success', 'data': data})
+
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
