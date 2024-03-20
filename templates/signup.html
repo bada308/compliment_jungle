@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="static/js/tailwind.config.js"></script>
     <script src="static/js/signup.js"></script>
@@ -20,14 +21,14 @@
       <h1 class="font-bold text-3xl">
         칭찬해 <span class="text-mainGreen">정글</span>러
       </h1>
-      <form class="space-y-4 mt-24">
+      <form class="space-y-6 mt-24">
         <div>
           <label class="text-sm text-gray-30">프로필 사진</label>
           <div class="flex gap-2">
             {% for i in 0, 1, 2, 3, 4 %}
             <div
               id="profile{{i}}"
-              class="profileItem border-[3px] border-white"
+              class="profileItem border-[3px] border-white hover:scale-125 transition-all duration-300"
               onclick="handleProfileSelect({{i}})"
             >
               <img src="static/profile/{{i}}.png" width="80" />
