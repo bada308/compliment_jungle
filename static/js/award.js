@@ -15,6 +15,12 @@ function handleClickCompliment(element) {
       if (response["result"] != "success") {
         alert("칭찬 내역 조회 실패!");
         return;
+      } else {
+        if (response.msg === "로그인 정보가 존재하지 않습니다.") {
+          alert("로그인 정보가 존재하지 않습니다.");
+          location.href = "/login";
+          return;
+        }
       }
 
       let { icon_num } = response["data"];
