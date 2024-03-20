@@ -16,9 +16,9 @@ function handleClickCompliment(element) {
         alert("칭찬 내역 조회 실패!");
         return;
       }
-      // 3. 서버가 돌려준 stars_list를 movies 라는 변수에 저장합니다.
+
       let { icon_num } = response["data"];
-      // 4. 영화 카드를 추가합니다. 이 때 휴지통 여부에 따라 카드 모양이 달라지므로 휴지통 여부(=false)도 같이 전달합니다.
+
       showEmojiSelector(habit_id, icon_num);
       $(`#complimentToggleButton${habit_id}`).text("접어두기");
     },
@@ -35,7 +35,7 @@ function showEmojiSelector(habit_id, icon_num) {
   Array.from({ length: 5 }, (_, i) => {
     let emoji = document.createElement("div");
 
-    if (i + 1 === icon_num) {
+    if (i === icon_num) {
       emoji.innerHTML = `
             <div class="bg-softYellow rounded-md p-1">
                 <img
