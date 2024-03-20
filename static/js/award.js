@@ -27,9 +27,10 @@ function handleClickCompliment(element) {
         }
       }
 
-      let { _id: complimentId, icon_num: iconNum } = response["data"];
+      let { _id: complimentId, icon_num: selected } = response["data"];
+      console.log(selected);
 
-      showEmojiSelector(complimentId, habitId, iconNum);
+      showEmojiSelector(complimentId, habitId, selected);
       $(`#complimentToggleButton${habitId}`).text("접어두기");
     },
   });
@@ -41,7 +42,7 @@ function handleClickCompliment(element) {
  * @param {습관 아이디} habitId
  * @param {선택한 이모지} iconNum
  */
-function showEmojiSelector(complimentId, habitId, icon_num) {
+function showEmojiSelector(complimentId, habitId, selected) {
   let emojiSelector = document.createElement("div");
   emojiSelector.data_habit = habitId;
   emojiSelector.data_compliment = complimentId;
@@ -53,7 +54,7 @@ function showEmojiSelector(complimentId, habitId, icon_num) {
   Array.from({ length: 5 }, (_, i) => {
     let emoji = document.createElement("div");
 
-    if (i === icon_num) {
+    if (i === selected) {
       emoji.innerHTML = `
             <div class="bg-softYellow rounded-md p-1">
                 <img
@@ -69,7 +70,7 @@ function showEmojiSelector(complimentId, habitId, icon_num) {
                 src="static/emoji/${i}.svg"
                 alt="이모지 선택 ${i}"
                 width="28"
-                onclick="handleEmojiClick(${i}, ${icon_num})"
+                onclick="handleEmojiClick(${i}, ${selected})"
                 />
             </div>`;
     }
@@ -85,10 +86,11 @@ function showEmojiSelector(complimentId, habitId, icon_num) {
  * @param {선택한 이모지} iconNum
  */
 const handleEmojiClick = (iconNum, selected) => {
+  console.log("handleEmojiClick", iconNum, selected);
   const habitId = document.querySelector("#emojiSelector").data_habit;
   const complimentId = document.querySelector("#emojiSelector").data_compliment;
 
-  if (selected) {
+  if (selected !== undefined) {
     console.log("update");
     updateCompliment(complimentId, iconNum);
   } else {
