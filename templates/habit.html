@@ -4,9 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="static/js/tailwind.config.js"></script>
     <script src="static/js/habit.js"></script>
+    <script src="static/js/logout.js"></script>
   </head>
   <body>
     <div
@@ -15,7 +17,7 @@
       <!-- Header -->
       <header
         id="header"
-        class="flex justify-between border-b-2 border-gray-20 p-1 mb-4 sticky top-0 bg-white"
+        class="flex justify-between border-b-2 border-gray-20 p-1 mb-4 sticky top-0 bg-white z-10"
       >
         <img
           src="static/image/jungle_logo.png"
@@ -23,6 +25,12 @@
           width="112"
         />
         <div class="flex gap-4 items-center">
+          <img
+            onclick="handleLogout()"
+            src="static/image/sign_out.svg"
+            alt="로그아웃 버튼"
+            width="26"
+          />
           <a href="/habit" class="h-fit"
             ><img
               src="static/image/user_icon.svg"
@@ -65,7 +73,7 @@
             >
             <input
               id="habitGoal"
-              type="text"
+              type="number"
               class="w-full border-2 border-gray-20 rounded-lg p-3 bg-gray-10 text-black outline-none"
               placeholder="목표 횟수 입력"
             />
@@ -84,12 +92,14 @@
         </div>
         <div id="habitButton" class="space-x-2 w-fit ml-auto">
           <button
-            class="bg-black text-white px-7 py-3 font-semibold rounded-xl"
+            onclick="handleCancelCreate()"
+            class="bg-black text-white px-7 py-3 font-semibold rounded-lg"
           >
             취소
           </button>
           <button
-            class="bg-primary text-white px-7 py-3 font-semibold rounded-xl"
+            onclick="handleCreateHabit()"
+            class="bg-primary text-white px-7 py-3 font-semibold rounded-lg"
           >
             생성
           </button>
@@ -98,22 +108,33 @@
       <div class="space-y-4">
         <!-- Habit 리스트 컨테이너-->
         {% for x in habits %}
-        <div
-          class="rounded-lg w-full flex justify-between p-6 items-center bg-softGreen border-2 border-mainGreen"
+        <section
+          class="rounded-lg w-full flex flex-col p-6 bg-softGreen border-2 border-mainGreen gap-2 relative group"
         >
-          <div class="flex flex-col gap-3">
-            <span class="text-xl font-bold text-black">{{ x.name }}</span>
-            <span class="text-sm text-gray-500"
-              >목표 {{ x.goal }} ・ {{x.tag}}</span
+          <img
+            id="deleteButton"
+            src="static/image/cross.svg"
+            width="14"
+            class="absolute right-3 top-3 cursor-pointer invisible group-hover:visible"
+            alt="습관 삭제하기"
+            onclick="handleDeleteHabit({{ x._id }})"
+          />
+          <div class="flex justify-between items-center">
+            <div class="flex flex-col gap-3">
+              <span class="text-xl font-bold text-black">{{ x.name }}</span>
+              <span class="text-sm text-gray-500"
+                >목표 {{ x.goal }} ・ {{x.tag}}</span
+              >
+            </div>
+            <div
+              class="border-4 rounded-full w-12 h-12 border-mainGreen flex justify-center items-center"
+              onclick="handleCountUp({{ x._id }})"
             >
+              <span class="font-bold text-mainGreen">{{ x.count }}</span>
+            </div>
           </div>
-          <div
-            class="border-4 rounded-full w-12 h-12 border-mainGreen flex justify-center items-center"
-            onclick="handleCountUp({{ x._id }})"
-          >
-            <span class="font-bold text-mainGreen">{{ x.count }}</span>
-          </div>
-        </div>
+        </section>
+
         {% endfor %}
       </div>
     </div>
