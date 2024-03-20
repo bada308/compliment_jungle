@@ -4,17 +4,17 @@
  * @returns
  */
 function handleClickCompliment(element) {
-  const habit_id = element.getAttribute("key");
+  const habitId = element.getAttribute("key");
 
   if ($("#emojiSelector").length) {
     $("#emojiSelector").remove();
-    $(`#complimentToggleButton${habit_id}`).text("칭찬하기");
+    $(`#complimentToggleButton${habitId}`).text("칭찬하기");
     return;
   }
 
   $.ajax({
     type: "GET",
-    url: `/compliments/${habit_id}`,
+    url: `/compliments/${habitId}`,
     success: function (response) {
       if (response["result"] != "success") {
         alert("칭찬 내역 조회 실패!");
@@ -27,10 +27,10 @@ function handleClickCompliment(element) {
         }
       }
 
-      let { _id: complimentId, icon_num } = response["data"];
+      let { _id: complimentId, icon_num: iconNum } = response["data"];
 
-      showEmojiSelector(complimentId, habit_id, icon_num);
-      $(`#complimentToggleButton${habit_id}`).text("접어두기");
+      showEmojiSelector(complimentId, habitId, iconNum);
+      $(`#complimentToggleButton${habitId}`).text("접어두기");
     },
   });
 }
@@ -39,7 +39,7 @@ function handleClickCompliment(element) {
  * 이모지 선택 영역을 보여주는 함수
  * @param {칭찬 아이디} complimentId
  * @param {습관 아이디} habitId
- * @param {선택한 이모지} icon_num
+ * @param {선택한 이모지} iconNum
  */
 function showEmojiSelector(complimentId, habitId, icon_num) {
   let emojiSelector = document.createElement("div");
