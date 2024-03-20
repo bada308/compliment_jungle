@@ -65,9 +65,9 @@ def signup():
     password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
     # 이메일 중복 확인
-    existing_nickname = db.users.find_one({"nickname": nickname})
+    existing_email = db.user.find_one({"email": email})
 
-    if existing_nickname:
+    if existing_email:
         return jsonify({'result': 'fail', 'msg': "이미 존재하는 email 입니다."})
 
     # 신규 사용자 정보 등록
@@ -82,9 +82,17 @@ def login():
     email = request.form['email']
     password = request.form['password']
 
-    # 비밀번호 해싱 및 사용자 인증
+    # 이메일, 비밀번호 오류 확인
+    user = db.user.find_one({'email': email})
+    if not user:
+        return jsonify({'result': 'fail', 'msg': '회원가입이 필요합니다.'})
+    
     password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    result = db.users.find_one({'email': email, 'password': password_hash})
+    if user['password'] != password_hash:
+        return jsonify({'result': 'fail', 'msg': '비밀번호가 올바르지 않습니다.'})
+
+    #  사용자 인증
+    result = db.user.find_one({'email': email, 'password': password_hash})
     result['_id'] = str(result['_id'])
 
     if result:
@@ -120,6 +128,8 @@ def post_habit():
 
     if not user_info:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+    except jwt.ExpiredSignatureError:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     name = request.form['name']
     tag = request.form['tag']
@@ -154,6 +164,8 @@ def get_habits():
 
     if not user_info:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+    except jwt.ExpiredSignatureError:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     habits = list(db.habits.find({'user_id': str(user_info['_id']), 'accomplishment': False}).sort("create_date", -1))
 
@@ -173,6 +185,8 @@ def delete_habit(_id):
 
     if not user_info:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+    except jwt.ExpiredSignatureError:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     db.habits.delete_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id)})
 
@@ -187,6 +201,8 @@ def post_habit_count(_id):
     user_info = authorization(token)
 
     if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'}
+    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     habit = db.habits.find_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id), })
@@ -214,6 +230,8 @@ def get_awards():
     user_info = authorization(token)
 
     if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'}
+    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     awards = db.habits.find({'accomplishment': True})
@@ -246,6 +264,8 @@ def post_compliment():
     user_info = authorization(token)
 
     if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'}
+    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     habit_id = request.form['_id']
@@ -288,6 +308,8 @@ def get_compliment(_id):
     user_info = authorization(token)
 
     if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'}
+    except jwt.ExpiredSignatureError:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     compliment = db.compliments.find_one({'user_id': str(user_info['_id']), 'habit_id': _id})
