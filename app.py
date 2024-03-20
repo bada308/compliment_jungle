@@ -14,21 +14,41 @@ SECRET_KEY = 'compliment_jungle'
 
 
 # 페이지 랜더링
-#@app.route('/login')
-#def render_login_page():
-#    return render_template('login.html')
+@app.route('/login')
+def render_login_page():
+    return render_template('login.html')
 
-#@app.route('/signup')
-#def render_signup_page():
-#    return render_template('signup.html')
+@app.route('/signup')
+def render_signup_page():
+    return render_template('signup.html')
 
-#@app.route('/habit')
-#def render_habit_page():
-#    return render_template('habit.html')
+@app.route('/habit')
+def render_habit_page():
+    return render_template('habit.html')
 
-#@app.route('/award')
-#def render_award_page():
-#    return render_template('award.html')
+@app.route('/award')
+def render_award_page():
+
+    awards = db.habits.find({'accomplishment': True})
+
+    data = []
+
+    for habit in awards:
+        
+        habit['_id'] = str(habit['_id'])
+        habit['create_date'] = habit['create_date'].strftime("%Y-%m-%d %H:%M:%S")
+
+        compliments = []
+        
+        for i in range(0, 5):
+            compliment_num = len(list(db.compliments.find({'habit_id': str(habit['_id']), 'icon_num': i})))
+            
+            if compliment_num != 0:
+                compliments.append({'icon_num': i, 'compliment_num': compliment_num})
+        
+        data.append({'habit': habit, 'compliments': compliments})
+
+    return render_template('index.html', result = "success", data = data)
 
 
 # ~ 회원 기능 ~
@@ -45,13 +65,13 @@ def signup():
     password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
     # 이메일 중복 확인
-    existing_nickname = db.user.find_one({"nickname": nickname})
+    existing_nickname = db.users.find_one({"nickname": nickname})
 
     if existing_nickname:
         return jsonify({'result': 'fail', 'msg': "이미 존재하는 email 입니다."})
 
     # 신규 사용자 정보 등록
-    db.user.insert_one({'email': email, 'password': password_hash, 'nickname': nickname, 'image_num' : int(image_num)})
+    db.users.insert_one({'email': email, 'password': password_hash, 'nickname': nickname, 'image_num' : int(image_num)})
     
     return jsonify({'result': 'success', 'msg': '회원가입이 완료되었습니다.'})
 
@@ -64,7 +84,7 @@ def login():
 
     # 비밀번호 해싱 및 사용자 인증
     password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    result = db.user.find_one({'email': email, 'password': password_hash})
+    result = db.users.find_one({'email': email, 'password': password_hash})
     result['_id'] = str(result['_id'])
 
     if result:
@@ -78,20 +98,27 @@ def login():
         return jsonify({'result': 'fail', 'msg': '아이디/비밀번호가 틀렸습니다.'})
 
 # 해당 서비스는 모든 기능에 로그인을 요하기 때문에, 모든 기능에 토큰을 디코딩하여 _id (user_id) 를 저장하는 과정이 필요하다.
+def authorization(token):
+
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+        user_info = db.users.find_one({'_id': ObjectId(payload['_id'])})
+        return user_info
     
+    except jwt.exceptions.DecodeError:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+
+
 # ~ 비즈니스 로직 ~
-# 습관 생성
+# 습관 생성 API
 @app.route('/habits', methods=['POST'])
 def post_habit():
 
     token = request.cookies.get('token')
     print(token)
+    user_info = authorization(token)
 
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.user.find_one({'_id': ObjectId(payload['_id'])})
-    
-    except jwt.exceptions.DecodeError:
+    if not user_info:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     name = request.form['name']
@@ -113,52 +140,56 @@ def post_habit():
     # 저장한 후에 생성된 _id를 가져와서 문자열로 변환하여 클라이언트에 전달
     habit['_id'] = str(result.inserted_id)
 
+    habit['create_date'] = habit['create_date'].strftime("%Y-%m-%d %H:%M:%S")
+
     return jsonify({'result': 'success', "data": habit})
 
-# 습관 조회
+# 습관 조회 API
 @app.route('/habits', methods=['GET'])
 def get_habits():
 
     token = request.cookies.get('token')
     print(token)
+    user_info = authorization(token)
 
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.user.find_one({'_id': ObjectId(payload['_id'])})
-    
-    except jwt.exceptions.DecodeError:
+    if not user_info:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     habits = list(db.habits.find({'user_id': str(user_info['_id']), 'accomplishment': False}).sort("create_date", -1))
 
     for habit in habits:
         habit['_id'] = str(habit['_id'])
+        habit['create_date'] = habit['create_date'].strftime("%Y-%m-%d %H:%M:%S")
 
     return jsonify({'result': 'success', 'data': habits})
 
-# 습관 삭제
+# 습관 삭제 API
 @app.route('/habits/<_id>', methods=['POST'])
 def delete_habit(_id):
 
     token = request.cookies.get('token')
     print(token)
+    user_info = authorization(token)
 
-    try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
-        user_info = db.user.find_one({'_id': ObjectId(payload['_id'])})
-    
-    except jwt.exceptions.DecodeError:
+    if not user_info:
         return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
-    db.habits.delete_one({'user_id': str(user_info['_id']),'_id': ObjectId(_id)})
+    db.habits.delete_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id)})
 
     return jsonify({'result': 'success'})
 
-# 습관 누적 횟수 증가
+# 습관 누적 횟수 증가 API
 @app.route('/habits/count/<_id>', methods=['POST'])
 def post_habit_count(_id):
 
-    habit = db.habits.find_one({'_id': ObjectId(_id)})
+    token = request.cookies.get('token')
+    print(token)
+    user_info = authorization(token)
+
+    if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+
+    habit = db.habits.find_one({'user_id': str(user_info['_id']), '_id': ObjectId(_id), })
 
     if habit['count'] >= habit['goal']:
         return jsonify({'result': 'fail', 'msg': '이미 목표 횟수에 도달했습니다.'})
@@ -174,9 +205,16 @@ def post_habit_count(_id):
 
     return jsonify({'result': 'success', 'data': data})
 
-# 명예의 전당 조회
+# 명예의 전당 조회 API
 @app.route('/awards', methods=['GET'])
 def get_awards():
+
+    token = request.cookies.get('token')
+    print(token)
+    user_info = authorization(token)
+
+    if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     awards = db.habits.find({'accomplishment': True})
 
@@ -185,6 +223,8 @@ def get_awards():
     for habit in awards:
         
         habit['_id'] = str(habit['_id'])
+        habit['create_date'] = habit['create_date'].strftime("%Y-%m-%d %H:%M:%S")
+
         compliments = []
         
         for i in range(0, 5):
@@ -196,16 +236,23 @@ def get_awards():
         data.append({'habit': habit, 'compliments': compliments})
 
     return jsonify({'result': 'success', "data": data})
-
-# 칭찬 생성
+ 
+# 칭찬 생성 API
 @app.route('/compliments', methods=['POST'])
 def post_compliment():
+
+    token = request.cookies.get('token')
+    print(token)
+    user_info = authorization(token)
+
+    if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
 
     habit_id = request.form['_id']
     icon_num = request.form['icon_num']
 
     compliment = {
-        'user_id': 1,
+        'user_id': str(user_info['_id']),
         'habit_id': habit_id,
         'icon_num': int(icon_num)
     }
@@ -215,8 +262,11 @@ def post_compliment():
     data = []
 
     habit = db.habits.find_one({'_id': ObjectId(habit_id), 'accomplishment': True})
-    habit['_id'] = str(habit['_id'])
 
+    if habit is None: 
+        return jsonify({'result': 'success', 'data': []})
+
+    habit['_id'] = str(habit['_id'])
     compliments = []
 
     for i in range(0, 5):
@@ -229,11 +279,22 @@ def post_compliment():
 
     return jsonify({'result': 'success', 'data': data})
 
-# 칭찬 조회
+# 칭찬 조회 API
 @app.route('/compliments/<_id>', methods=['GET'])
 def get_compliment(_id):
 
-    compliment = db.compliments.find_one({'habit_id': _id, 'accomplishment': True})
+    token = request.cookies.get('token')
+    print(token)
+    user_info = authorization(token)
+
+    if not user_info:
+        return jsonify({'result': 'fail', 'msg': '로그인 정보가 존재하지 않습니다.'})
+
+    compliment = db.compliments.find_one({'user_id': str(user_info['_id']), 'habit_id': _id})
+    
+    if compliment is None: 
+        return jsonify({'result': 'success', 'data': []})
+    
     compliment['_id'] = str(compliment['_id'])
 
     return jsonify({'result': 'success', 'data': compliment})
