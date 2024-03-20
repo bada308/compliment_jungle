@@ -18,12 +18,12 @@ function handleLogin() {
     data: { email, password },
     success: function (response) {
       if (response.result === "success") {
-        console.log(response);
+        alert("로그인 성공!");
         response.token && $.cookie("token", response.token);
         response.exp && localStorage.setItem("exp", response.exp);
-        window.location.href = "/aword";
+        window.location.href = "/habit";
       } else {
-        alert(response.message);
+        alert(response?.msg);
       }
     },
   });
