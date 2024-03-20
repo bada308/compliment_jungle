@@ -7,7 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="static/js/tailwind.config.js"></script>
-    <script src="static/js/aword.js"></script>
+    <script src="static/js/award.js"></script>
     <script src="static/js/logout.js"></script>
   </head>
   <body>
@@ -37,9 +37,9 @@
               alt="나의 습관 버튼"
               width="28"
           /></a>
-          <a href="/aword" class="h-fit"
+          <a href="/award" class="h-fit"
             ><img
-              src="static/image/aword_icon.svg"
+              src="static/image/award_icon.svg"
               alt="명에의 전당 버튼"
               width="28"
           /></a>
@@ -47,10 +47,10 @@
       </header>
       <!-- Main -->
       <div class="space-y-6">
-        {% for x in awords %}
+        {% for x in awards %}
         <div class="space-y-2">
           <div
-            id="aword-{{ x.habit_id }}"
+            id="award-{{ x.habit_id }}"
             class="rounded-lg w-full flex flex-col gap-6 p-6 bg-softYellow border-2 border-mainYellow"
           >
             <div class="flex gap-2">
