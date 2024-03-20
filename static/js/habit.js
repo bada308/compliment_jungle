@@ -1,6 +1,68 @@
-// $(document).ready(function () {
-//   $("#habitCreate").css("display", "none");
-// });
+$(document).ready(function () {
+  $.ajax({
+    url: "/habits",
+    method: "GET",
+    success: function (response) {
+      if (response.result === "success") {
+        response.data && addHabit(response.data);
+      } else {
+        if (response.msg === "로그인 정보가 존재하지 않습니다.") {
+          alert("로그인 정보가 존재하지 않습니다.");
+          location.href = "/login";
+          return;
+        }
+      }
+    },
+  });
+});
+
+function addHabit(habits) {
+  habits.forEach((habit) => {
+    const { _id, name, count, goal, tag } = habit;
+
+    const habitCard = `<section
+          key=${_id}
+          data-count=${count}
+          data-goal=${goal}
+          onmouseover="changeCheerupMessage(this)"
+          class="rounded-lg w-full flex flex-col p-6 bg-softGreen border-2 border-mainGreen gap-2 relative group"
+        >
+          <div class="flex justify-between items-center">
+            <div class="flex flex-col gap-3">
+              <span class="text-xl font-bold text-black">${name}</span>
+              <span class="text-sm text-gray-500"
+                >목표 ${goal} ・ ${tag}</span
+              >
+            </div>
+            <div
+              key=${_id}
+              class="border-4 rounded-full w-12 h-12 border-mainGreen flex justify-center items-center group active:bg-mainGreen transition-colors duration-200"
+              onclick="handleCountUp(this)"
+            >
+              <span
+                class="font-bold text-mainGreen group-active:text-white transition-colors duration-200 cursor-pointer"
+                >${count}</span
+              >
+            </div>
+          </div>
+          <img
+            key=${_id}
+            id="deleteButton"
+            src="static/image/cross.svg"
+            width="14"
+            class="absolute right-3 top-3 cursor-pointer invisible group-hover:visible"
+            alt="습관 삭제하기"
+            onclick="handleDeleteHabit(this)"
+          />
+          <div
+            id="cheerupMessage${_id}"
+            class="absolute group-hover:visible invisible text-sm text-gray-500 -bottom-8 p-2 rounded-lg w-full text-center"
+          ></div>
+        </section>`;
+
+    $("#habitContainer").append(habitCard);
+  });
+}
 
 function handleToggle() {
   $("#habitCreate").toggle();
@@ -11,7 +73,9 @@ function handleToggle() {
   }
 }
 
-function handleCountUp(habitId) {
+function handleCountUp(element) {
+  const habitId = element.getAttribute("key");
+
   $.ajax({
     type: "POST",
     url: `/habits/count/${habitId}`,
@@ -33,8 +97,6 @@ function handleCreateHabit() {
   const habitName = $("#habitName").val();
   const habitGoal = $("#habitGoal").val();
   const habitTag = $("#habitTag").val();
-
-  console.log(habitName, habitGoal, habitTag);
 
   if (!habitName) {
     alert("습관 이름을 입력해주세요!");
@@ -73,7 +135,9 @@ function handleCancelCreate() {
   $("#habitTag").val("");
 }
 
-function handleDeleteHabit(habitId) {
+function handleDeleteHabit(element) {
+  const habitId = element.getAttribute("key");
+
   if (!confirm("습관을 삭제하시겠습니까?")) {
     return;
   }
@@ -88,7 +152,11 @@ function handleDeleteHabit(habitId) {
   });
 }
 
-function changeCheerupMessage(habitId, count, goal) {
+function changeCheerupMessage(element) {
+  const habitId = element.getAttribute("key");
+  const count = element.getAttribute("data-count");
+  const goal = element.getAttribute("data-goal");
+
   let message = MESSAGE.default;
   if (count >= goal / 2) {
     message = MESSAGE.half;
