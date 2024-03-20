@@ -35,9 +35,17 @@ def render_award_page():
 
     for habit in awards:
         
+        
         habit['_id'] = str(habit['_id'])
         habit['create_date'] = habit['create_date'].strftime("%Y-%m-%d %H:%M:%S")
 
+        award_user = db.users.find_one({'_id': ObjectId(habit['user_id'])})
+
+        image_num = award_user['image_num']
+        nickname = award_user['nickname']
+        habit['image_num'] = image_num
+        habit['nickname'] = nickname
+    
         compliments = []
         
         for i in range(0, 5):
@@ -48,7 +56,7 @@ def render_award_page():
         
         data.append({'habit': habit, 'compliments': compliments})
 
-    return render_template('index.html', result = "success", data = data)
+    return render_template('award.html', result = "success", data = data)
 
 
 # ~ 회원 기능 ~
@@ -234,6 +242,13 @@ def get_awards():
         
         habit['_id'] = str(habit['_id'])
         habit['create_date'] = habit['create_date'].strftime("%Y-%m-%d %H:%M:%S")
+
+        award_user = db.users.find_one({'_id': ObjectId(habit['user_id'])})
+
+        image_num = award_user['image_num']
+        nickname = award_user['nickname']
+        habit['image_num'] = image_num
+        habit['nickname'] = nickname
 
         compliments = []
         
