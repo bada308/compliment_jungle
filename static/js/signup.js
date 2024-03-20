@@ -51,12 +51,22 @@ function handleSignup() {
     return;
   }
 
-  const data = {
-    profileNum,
-    nickname,
-    email,
-    password,
-  };
-
-  console.log(data);
+  $.ajax({
+    url: "/signup",
+    method: "POST",
+    data: {
+      image_num: profileNum,
+      nickname,
+      email,
+      password,
+    },
+    success: function (response) {
+      if (response.result === "success") {
+        alert("회원가입 성공!");
+        window.location.href = "/login";
+      } else {
+        alert(response?.msg);
+      }
+    },
+  });
 }
