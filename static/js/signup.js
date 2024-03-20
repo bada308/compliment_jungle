@@ -55,6 +55,21 @@ function handleSignup() {
     return;
   }
 
+  if (!emailValidator(email)) {
+    alert(ERROR_MESSAGES.email);
+    return;
+  }
+
+  if (!passwordValidator(password)) {
+    alert(ERROR_MESSAGES.password);
+    return;
+  }
+
+  if (!nicknameValidator(nickname)) {
+    alert(ERROR_MESSAGES.nickname);
+    return;
+  }
+
   $.ajax({
     url: "/signup",
     method: "POST",
