@@ -1,3 +1,7 @@
+$(document).ready(function () {
+  localStorage.removeItem("profileNum");
+});
+
 function handleProfileSelect(selected) {
   let profileItem = document.getElementsByClassName("profileItem");
   profileItem[selected].classList.remove("border-white");
