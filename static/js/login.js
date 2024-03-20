@@ -12,6 +12,16 @@ function handleLogin() {
     return;
   }
 
+  if (!emailValidator(email)) {
+    alert(ERROR_MESSAGES.email);
+    return;
+  }
+
+  if (!passwordValidator(password)) {
+    alert(ERROR_MESSAGES.password);
+    return;
+  }
+
   $.ajax({
     url: "/login",
     method: "POST",
