@@ -65,7 +65,7 @@ def signup():
     password_hash = hashlib.sha256(password.encode('utf-8')).hexdigest()
 
     # 이메일 중복 확인
-    existing_email = db.user.find_one({"email": email})
+    existing_email = db.users.find_one({"email": email})
 
     if existing_email:
         return jsonify({'result': 'fail', 'msg': "이미 존재하는 email 입니다."})
@@ -83,7 +83,7 @@ def login():
     password = request.form['password']
 
     # 이메일, 비밀번호 오류 확인
-    user = db.user.find_one({'email': email})
+    user = db.users.find_one({'email': email})
     if not user:
         return jsonify({'result': 'fail', 'msg': '회원가입이 필요합니다.'})
     
@@ -92,7 +92,7 @@ def login():
         return jsonify({'result': 'fail', 'msg': '비밀번호가 올바르지 않습니다.'})
 
     #  사용자 인증
-    result = db.user.find_one({'email': email, 'password': password_hash})
+    result = db.users.find_one({'email': email, 'password': password_hash})
     result['_id'] = str(result['_id'])
 
     if result:
